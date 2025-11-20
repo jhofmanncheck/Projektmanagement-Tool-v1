@@ -69,7 +69,7 @@ export const TaskList: React.FC<TaskListProps> = ({ onEditTask }) => {
             : '88px';  // 56px (date) + 32px (milestone) = 88px
           
           return (
-            <div key={team} className="mb-2">
+            <div key={team}>
               {/* Team Header */}
               <div 
                 className="sticky z-10 bg-slate-200 border-y border-slate-300 px-4 py-2 flex items-center justify-between group"

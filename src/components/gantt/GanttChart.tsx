@@ -4,13 +4,19 @@ import { TimelineHeader } from './TimelineHeader';
 import { TaskRow } from './TaskRow';
 import { DependencyLines } from './DependencyLines';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { generateDateRange, getColumnWidth } from '../../utils/dateUtils';
 
 interface GanttChartProps {
   onEditMilestone: (milestoneId: string) => void;
 }
 
 export const GanttChart: React.FC<GanttChartProps> = ({ onEditMilestone }) => {
-  const { tasks, teams, expandedTeams, toggleTeamExpanded, setSelectedTaskId } = useGantt();
+  const { tasks, teams, expandedTeams, toggleTeamExpanded, setSelectedTaskId, viewSettings } = useGantt();
+  
+  // Calculate total timeline width
+  const dates = generateDateRange(viewSettings.startDate, viewSettings.endDate, viewSettings.scale);
+  const columnWidth = getColumnWidth(viewSettings.scale, viewSettings.zoom);
+  const totalWidth = dates.length * columnWidth;
 
   // Group tasks by team
   const tasksByTeam = React.useMemo(() => {
@@ -57,7 +63,10 @@ export const GanttChart: React.FC<GanttChartProps> = ({ onEditMilestone }) => {
             return (
               <React.Fragment key={team}>
                 {/* Team header row */}
-                <div className="h-8 border-b bg-slate-200 border-slate-300 flex items-center px-4 sticky z-10">
+                <div 
+                  className="h-8 border-b bg-slate-200 border-slate-300 flex items-center px-4 sticky z-10"
+                  style={{ minWidth: `${totalWidth}px` }}
+                >
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
