@@ -26,7 +26,14 @@ export const TaskRow: React.FC<TaskRowProps> = ({ task }) => {
       {/* Grid cells */}
       {dates.map((date, index) => {
         const isToday = isSameDay(date, today);
-        const bgClass = isToday ? 'bg-blue-50/30' : '';
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+        
+        let bgClass = '';
+        if (isToday) {
+          bgClass = 'bg-blue-50/30';
+        } else if (isWeekend && scale === 'day') {
+          bgClass = 'bg-slate-100/50';
+        }
 
         return (
           <div

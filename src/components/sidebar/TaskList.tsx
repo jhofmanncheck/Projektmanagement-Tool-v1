@@ -9,7 +9,7 @@ interface TaskListProps {
 }
 
 export const TaskList: React.FC<TaskListProps> = ({ onEditTask }) => {
-  const { tasks, teams, deleteTask, selectedTaskId, setSelectedTaskId, expandedTeams, toggleTeamExpanded } = useGantt();
+  const { tasks, teams, viewSettings, deleteTask, selectedTaskId, setSelectedTaskId, expandedTeams, toggleTeamExpanded } = useGantt();
 
   // Group tasks by team
   const tasksByTeam = React.useMemo(() => {
@@ -43,8 +43,19 @@ export const TaskList: React.FC<TaskListProps> = ({ onEditTask }) => {
 
   return (
     <div className="w-80 border-r bg-white flex-shrink-0 overflow-auto">
-      <div className="sticky top-0 z-20 bg-slate-100 border-b px-4 flex items-center" style={{ height: '56px' }}>
-        <h3 className="text-sm font-medium text-slate-600">Tasks by Team</h3>
+      <div className="sticky top-0 z-20 bg-white">
+        {/* Spacer for month bar (only in day and week views) */}
+        {(viewSettings.scale === 'day' || viewSettings.scale === 'week') && (
+          <div className="bg-slate-100 border-b" style={{ height: '36px' }} />
+        )}
+        
+        {/* Task Name Header */}
+        <div className="bg-slate-100 border-b px-4 flex items-center" style={{ height: '56px' }}>
+          <h3 className="text-sm font-medium text-slate-600">Tasks by Team</h3>
+        </div>
+
+        {/* Spacer for milestone row */}
+        <div className="bg-slate-50/50 border-b" style={{ height: '32px' }} />
       </div>
 
       <div>
@@ -52,10 +63,18 @@ export const TaskList: React.FC<TaskListProps> = ({ onEditTask }) => {
           const isExpanded = expandedTeams.has(team);
           const teamTasks = tasksByTeam[team];
           
+          // Calculate sticky position based on view scale
+          const stickyTop = viewSettings.scale === 'day' || viewSettings.scale === 'week' 
+            ? '124px'  // 36px (month) + 56px (date) + 32px (milestone) = 124px
+            : '88px';  // 56px (date) + 32px (milestone) = 88px
+          
           return (
             <div key={team} className="mb-2">
               {/* Team Header */}
-              <div className="sticky top-14 z-10 bg-slate-200 border-y border-slate-300 px-4 py-2 flex items-center justify-between group">
+              <div 
+                className="sticky z-10 bg-slate-200 border-y border-slate-300 px-4 py-2 flex items-center justify-between group"
+                style={{ top: stickyTop }}
+              >
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => toggleTeamExpanded(team)}
