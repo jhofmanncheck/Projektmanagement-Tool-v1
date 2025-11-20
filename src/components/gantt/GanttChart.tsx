@@ -5,7 +5,11 @@ import { TaskRow } from './TaskRow';
 import { DependencyLines } from './DependencyLines';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
-export const GanttChart: React.FC = () => {
+interface GanttChartProps {
+  onEditMilestone: (milestoneId: string) => void;
+}
+
+export const GanttChart: React.FC<GanttChartProps> = ({ onEditMilestone }) => {
   const { tasks, teams, expandedTeams, toggleTeamExpanded, setSelectedTaskId } = useGantt();
 
   // Group tasks by team
@@ -42,7 +46,7 @@ export const GanttChart: React.FC = () => {
     <div className="flex-1 overflow-auto" onClick={() => setSelectedTaskId(null)}>
       <div className="relative">
         {/* Timeline header */}
-        <TimelineHeader />
+        <TimelineHeader onEditMilestone={onEditMilestone} />
 
         {/* Task rows with grid, grouped by team */}
         <div className="relative">

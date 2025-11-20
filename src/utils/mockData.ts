@@ -10,7 +10,7 @@ export const createMockProject = (): GanttProject => {
       name: 'Project Kickoff & Planning',
       startDate: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000),
       endDate: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000),
-      status: 'completed',
+      status: 'done',
       team: 'product',
       assignee: 'Sarah Chen',
       entwickler: 'Thomas Müller',
@@ -34,7 +34,7 @@ export const createMockProject = (): GanttProject => {
       name: 'Technical Architecture Design',
       startDate: new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000),
       endDate: new Date(today.getTime() + 4 * 24 * 60 * 60 * 1000),
-      status: 'in-progress',
+      status: 'in-review',
       team: 'engineering',
       assignee: 'Alex Kumar',
       entwickler: 'Lars Wagner',
@@ -46,7 +46,7 @@ export const createMockProject = (): GanttProject => {
       name: 'UI/UX Design Mockups',
       startDate: new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000),
       endDate: new Date(today.getTime() + 10 * 24 * 60 * 60 * 1000),
-      status: 'not-started',
+      status: 'open',
       team: 'design',
       assignee: 'Emma Thompson',
       dependencies: ['2'],
@@ -57,7 +57,7 @@ export const createMockProject = (): GanttProject => {
       name: 'Backend API Development',
       startDate: new Date(today.getTime() + 5 * 24 * 60 * 60 * 1000),
       endDate: new Date(today.getTime() + 19 * 24 * 60 * 60 * 1000),
-      status: 'not-started',
+      status: 'open',
       team: 'engineering',
       assignee: 'David Park',
       entwickler: 'Stefan Fischer',
@@ -69,7 +69,7 @@ export const createMockProject = (): GanttProject => {
       name: 'Frontend Components Development',
       startDate: new Date(today.getTime() + 11 * 24 * 60 * 60 * 1000),
       endDate: new Date(today.getTime() + 25 * 24 * 60 * 60 * 1000),
-      status: 'not-started',
+      status: 'open',
       team: 'engineering',
       assignee: 'Lisa Wang',
       entwickler: 'Julia Becker',
@@ -81,7 +81,7 @@ export const createMockProject = (): GanttProject => {
       name: 'Integration Testing',
       startDate: new Date(today.getTime() + 20 * 24 * 60 * 60 * 1000),
       endDate: new Date(today.getTime() + 27 * 24 * 60 * 60 * 1000),
-      status: 'not-started',
+      status: 'open',
       team: 'engineering',
       assignee: 'James Mitchell',
       entwickler: 'Michael Schneider',
@@ -93,7 +93,7 @@ export const createMockProject = (): GanttProject => {
       name: 'Marketing Campaign Preparation',
       startDate: new Date(today.getTime() + 12 * 24 * 60 * 60 * 1000),
       endDate: new Date(today.getTime() + 26 * 24 * 60 * 60 * 1000),
-      status: 'not-started',
+      status: 'open',
       team: 'marketing',
       assignee: 'Rachel Green',
       dependencies: ['4'],
@@ -104,7 +104,7 @@ export const createMockProject = (): GanttProject => {
       name: 'User Acceptance Testing',
       startDate: new Date(today.getTime() + 28 * 24 * 60 * 60 * 1000),
       endDate: new Date(today.getTime() + 34 * 24 * 60 * 60 * 1000),
-      status: 'not-started',
+      status: 'open',
       team: 'product',
       assignee: 'Michael Scott',
       entwickler: 'Felix Weber',
@@ -116,7 +116,7 @@ export const createMockProject = (): GanttProject => {
       name: 'Production Deployment',
       startDate: new Date(today.getTime() + 35 * 24 * 60 * 60 * 1000),
       endDate: new Date(today.getTime() + 36 * 24 * 60 * 60 * 1000),
-      status: 'not-started',
+      status: 'open',
       team: 'operations',
       assignee: 'Kevin Zhang',
       entwickler: 'Hans Hoffmann',
@@ -130,25 +130,36 @@ export const createMockProject = (): GanttProject => {
       id: 'm1',
       name: 'Project Kickoff',
       date: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000),
-      type: 'kickoff'
+      type: 'kickoff',
+      description: 'Initial project kickoff meeting with all stakeholders to align on goals and timeline.'
     },
     {
       id: 'm2',
-      name: 'Design Review',
-      date: new Date(today.getTime() + 10 * 24 * 60 * 60 * 1000),
-      type: 'review'
+      name: 'IT Infrastructure Setup',
+      date: new Date(today.getTime() + 5 * 24 * 60 * 60 * 1000),
+      type: 'it-kickoff',
+      description: 'Complete setup of development environment, CI/CD pipelines, and infrastructure.'
     },
     {
       id: 'm3',
-      name: 'Development Complete',
-      date: new Date(today.getTime() + 27 * 24 * 60 * 60 * 1000),
-      type: 'deadline'
+      name: 'Design Review',
+      date: new Date(today.getTime() + 10 * 24 * 60 * 60 * 1000),
+      type: 'milestone',
+      description: 'Comprehensive review of all design mockups and UX flows with the design team.'
     },
     {
       id: 'm4',
-      name: 'Go-Live',
+      name: 'Development Complete',
+      date: new Date(today.getTime() + 27 * 24 * 60 * 60 * 1000),
+      type: 'deadline',
+      description: 'All development tasks must be completed and code frozen for testing phase.'
+    },
+    {
+      id: 'm5',
+      name: 'Production Go-Live',
       date: new Date(today.getTime() + 36 * 24 * 60 * 60 * 1000),
-      type: 'go-live'
+      type: 'go-live',
+      description: 'Official product launch to production environment and public release.'
     }
   ];
 

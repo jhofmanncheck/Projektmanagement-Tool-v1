@@ -6,6 +6,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Trash2 } from 'lucide-react';
 
 interface TaskFormProps {
   isOpen: boolean;
@@ -14,7 +15,7 @@ interface TaskFormProps {
 }
 
 export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, taskId }) => {
-  const { tasks, teams, addTask, updateTask } = useGantt();
+  const { tasks, teams, addTask, updateTask, deleteTask } = useGantt();
   const existingTask = taskId ? tasks.find((t) => t.id === taskId) : null;
 
   const [formData, setFormData] = useState<{
@@ -31,7 +32,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, taskId }) =
     name: '',
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date().toISOString().split('T')[0],
-    status: 'not-started',
+    status: 'open',
     team: teams[0] || '',
     assignee: '',
     entwickler: '',
@@ -57,7 +58,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, taskId }) =
         name: '',
         startDate: new Date().toISOString().split('T')[0],
         endDate: new Date().toISOString().split('T')[0],
-        status: 'not-started',
+        status: 'open',
         team: teams[0] || '',
         assignee: '',
         entwickler: '',
@@ -94,6 +95,13 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, taskId }) =
     }
 
     onClose();
+  };
+
+  const handleDelete = () => {
+    if (existingTask && confirm(`Delete task "${existingTask.name}"?`)) {
+      deleteTask(existingTask.id);
+      onClose();
+    }
   };
 
   const availableDependencies = tasks.filter((t) => t.id !== taskId);
@@ -146,10 +154,10 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, taskId }) =
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="not-started">Not Started</SelectItem>
+                  <SelectItem value="open">Open</SelectItem>
                   <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="blocked">Blocked</SelectItem>
+                  <SelectItem value="in-review">In Review</SelectItem>
+                  <SelectItem value="done">Done</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -250,11 +258,24 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, taskId }) =
             </div>
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit">{existingTask ? 'Update Task' : 'Create Task'}</Button>
+          <DialogFooter className="sm:justify-between">
+            {existingTask && (
+              <Button 
+                type="button" 
+                variant="destructive" 
+                onClick={handleDelete}
+                className="gap-2"
+              >
+                <Trash2 className="size-4" />
+                Delete Task
+              </Button>
+            )}
+            <div className="flex gap-2 sm:ml-auto">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit">{existingTask ? 'Update Task' : 'Create Task'}</Button>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -1,9 +1,13 @@
 import React from 'react';
 import { useGantt } from '../../contexts/GanttContext';
-import { generateDateRange, formatDate, getColumnWidth, isSameDay } from '../../utils/dateUtils';
-import { getMilestoneBackgroundColor } from '../../utils/colorUtils';
+import { generateDateRange, getColumnWidth, isSameDay } from '../../utils/dateUtils';
+import { MilestoneMarker } from './MilestoneMarker';
 
-export const TimelineHeader: React.FC = () => {
+interface TimelineHeaderProps {
+  onEditMilestone: (milestoneId: string) => void;
+}
+
+export const TimelineHeader: React.FC<TimelineHeaderProps> = ({ onEditMilestone }) => {
   const { viewSettings, milestones } = useGantt();
   const { startDate, endDate, scale, zoom } = viewSettings;
 
@@ -12,11 +16,6 @@ export const TimelineHeader: React.FC = () => {
   const totalWidth = dates.length * columnWidth;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
-  // Helper function to find milestone for a date
-  const getMilestoneForDate = (date: Date) => {
-    return milestones.find(m => isSameDay(m.date, date));
-  };
 
   const formatDateParts = (date: Date, scale: string) => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -36,26 +35,19 @@ export const TimelineHeader: React.FC = () => {
 
   return (
     <div className="sticky top-0 z-20 bg-white border-b">
-      <div className="flex" style={{ minWidth: `${totalWidth}px`, height: '56px' }}>
+      {/* Date Header Row */}
+      <div className="flex border-b" style={{ minWidth: `${totalWidth}px`, height: '56px' }}>
         {dates.map((date, index) => {
           const isToday = isSameDay(date, today);
-          const milestone = getMilestoneForDate(date);
           const dateParts = formatDateParts(date, scale);
 
-          // Determine background color priority: milestone > today > default
-          let bgClass = '';
-          if (milestone) {
-            bgClass = getMilestoneBackgroundColor(milestone.type);
-          } else if (isToday) {
-            bgClass = 'bg-blue-50 border-blue-300';
-          }
+          const bgClass = isToday ? 'bg-blue-50 border-blue-300' : '';
 
           return (
             <div
               key={index}
               className={`border-r flex-shrink-0 text-center text-xs flex flex-col items-center justify-center ${bgClass}`}
               style={{ width: `${columnWidth}px`, minWidth: `${columnWidth}px` }}
-              title={milestone ? `${milestone.name} (${milestone.type})` : ''}
             >
               <div className={`truncate leading-tight ${isToday ? 'text-blue-600' : 'text-slate-700'}`}>
                 {dateParts.top}
@@ -66,6 +58,35 @@ export const TimelineHeader: React.FC = () => {
             </div>
           );
         })}
+      </div>
+
+      {/* Milestone Row */}
+      <div 
+        className="relative bg-slate-50/50" 
+        style={{ minWidth: `${totalWidth}px`, height: '32px' }}
+      >
+        {dates.map((date, index) => {
+          const isToday = isSameDay(date, today);
+          return (
+            <div
+              key={index}
+              className={`absolute top-0 bottom-0 border-r ${isToday ? 'bg-blue-50/30' : ''}`}
+              style={{ 
+                left: `${index * columnWidth}px`,
+                width: `${columnWidth}px` 
+              }}
+            />
+          );
+        })}
+        
+        {/* Milestone Markers */}
+        {milestones.map((milestone) => (
+          <MilestoneMarker
+            key={milestone.id}
+            milestone={milestone}
+            onEdit={onEditMilestone}
+          />
+        ))}
       </div>
     </div>
   );

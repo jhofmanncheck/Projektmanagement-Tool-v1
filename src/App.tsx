@@ -13,6 +13,7 @@ function App() {
   const [isMilestoneFormOpen, setIsMilestoneFormOpen] = useState(false);
   const [isTeamFormOpen, setIsTeamFormOpen] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editingMilestoneId, setEditingMilestoneId] = useState<string | null>(null);
 
   const handleAddTask = () => {
     setEditingTaskId(null);
@@ -29,13 +30,28 @@ function App() {
     setEditingTaskId(null);
   };
 
+  const handleAddMilestone = () => {
+    setEditingMilestoneId(null);
+    setIsMilestoneFormOpen(true);
+  };
+
+  const handleEditMilestone = (milestoneId: string) => {
+    setEditingMilestoneId(milestoneId);
+    setIsMilestoneFormOpen(true);
+  };
+
+  const handleCloseMilestoneForm = () => {
+    setIsMilestoneFormOpen(false);
+    setEditingMilestoneId(null);
+  };
+
   return (
     <GanttProvider>
       <div className="h-screen flex flex-col bg-slate-50">
         {/* Toolbar */}
         <Toolbar 
           onAddTask={handleAddTask} 
-          onAddMilestone={() => setIsMilestoneFormOpen(true)}
+          onAddMilestone={handleAddMilestone}
           onAddTeam={() => setIsTeamFormOpen(true)}
         />
 
@@ -45,7 +61,7 @@ function App() {
           <TaskList onEditTask={handleEditTask} />
 
           {/* Center - Gantt chart */}
-          <GanttChart />
+          <GanttChart onEditMilestone={handleEditMilestone} />
 
           {/* Right sidebar - Task details */}
           <div className="w-80 border-l bg-white overflow-auto flex-shrink-0">
@@ -55,7 +71,7 @@ function App() {
 
         {/* Modals */}
         <TaskForm isOpen={isTaskFormOpen} onClose={handleCloseTaskForm} taskId={editingTaskId} />
-        <MilestoneForm isOpen={isMilestoneFormOpen} onClose={() => setIsMilestoneFormOpen(false)} />
+        <MilestoneForm isOpen={isMilestoneFormOpen} onClose={handleCloseMilestoneForm} milestoneId={editingMilestoneId} />
         <TeamForm isOpen={isTeamFormOpen} onClose={() => setIsTeamFormOpen(false)} />
       </div>
     </GanttProvider>

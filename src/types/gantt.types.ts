@@ -1,10 +1,10 @@
-export type TaskStatus = 'not-started' | 'in-progress' | 'completed' | 'blocked';
+export type TaskStatus = 'open' | 'in-progress' | 'in-review' | 'done';
 
 export type Team = string; // Dynamic team names
 
 export type ViewScale = 'day' | 'week' | 'month';
 
-export type MilestoneType = 'kickoff' | 'deadline' | 'go-live' | 'review';
+export type MilestoneType = 'kickoff' | 'it-kickoff' | 'deadline' | 'go-live' | 'milestone';
 
 export interface Task {
   id: string;
@@ -25,6 +25,7 @@ export interface Milestone {
   name: string;
   date: Date;
   type: MilestoneType;
+  description?: string;
 }
 
 export interface GanttProject {
