@@ -1,6 +1,6 @@
 export type TaskStatus = 'not-started' | 'in-progress' | 'completed' | 'blocked';
 
-export type Team = 'engineering' | 'design' | 'product' | 'marketing' | 'operations';
+export type Team = string; // Dynamic team names
 
 export type ViewScale = 'day' | 'week' | 'month';
 
@@ -32,6 +32,7 @@ export interface GanttProject {
   name: string;
   tasks: Task[];
   milestones: Milestone[];
+  teams: string[]; // Available team names
   createdAt: Date;
   updatedAt: Date;
 }

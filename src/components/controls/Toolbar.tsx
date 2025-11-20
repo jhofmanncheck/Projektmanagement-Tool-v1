@@ -7,9 +7,10 @@ import { ZoomIn, ZoomOut, Save, Upload, Plus } from 'lucide-react';
 interface ToolbarProps {
   onAddTask: () => void;
   onAddMilestone: () => void;
+  onAddTeam: () => void;
 }
 
-export const Toolbar: React.FC<ToolbarProps> = ({ onAddTask, onAddMilestone }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({ onAddTask, onAddMilestone, onAddTeam }) => {
   const { viewSettings, setViewSettings, saveProject, loadProject, project } = useGantt();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,6 +46,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onAddTask, onAddMilestone }) =
         <Button onClick={onAddTask} size="sm">
           <Plus className="size-4 mr-2" />
           Add Task
+        </Button>
+        
+        <Button onClick={onAddTeam} size="sm" variant="outline">
+          <Plus className="size-4 mr-2" />
+          Add Team
         </Button>
         
         <Button onClick={onAddMilestone} size="sm" variant="outline">

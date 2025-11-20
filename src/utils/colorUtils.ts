@@ -34,3 +34,13 @@ export const getMilestoneColor = (type: string): string => {
   };
   return colors[type] || 'text-gray-600';
 };
+
+export const getMilestoneBackgroundColor = (type: string): string => {
+  const colors: Record<string, string> = {
+    'kickoff': 'bg-slate-100',
+    'deadline': 'bg-red-100',
+    'go-live': 'bg-blue-100',
+    'review': 'bg-slate-100'
+  };
+  return colors[type] || 'bg-slate-100';
+};

@@ -157,6 +157,7 @@ export const createMockProject = (): GanttProject => {
     name: 'Q1 Product Launch',
     tasks,
     milestones,
+    teams: ['engineering', 'design', 'product', 'marketing', 'operations'],
     createdAt: new Date(),
     updatedAt: new Date()
   };

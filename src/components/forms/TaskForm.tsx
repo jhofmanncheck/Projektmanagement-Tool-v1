@@ -14,7 +14,7 @@ interface TaskFormProps {
 }
 
 export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, taskId }) => {
-  const { tasks, addTask, updateTask } = useGantt();
+  const { tasks, teams, addTask, updateTask } = useGantt();
   const existingTask = taskId ? tasks.find((t) => t.id === taskId) : null;
 
   const [formData, setFormData] = useState<{
@@ -32,7 +32,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, taskId }) =
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date().toISOString().split('T')[0],
     status: 'not-started',
-    team: 'engineering',
+    team: teams[0] || '',
     assignee: '',
     entwickler: '',
     link: '',
@@ -58,7 +58,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, taskId }) =
         startDate: new Date().toISOString().split('T')[0],
         endDate: new Date().toISOString().split('T')[0],
         status: 'not-started',
-        team: 'engineering',
+        team: teams[0] || '',
         assignee: '',
         entwickler: '',
         link: '',
@@ -161,11 +161,11 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, taskId }) =
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="engineering">Engineering</SelectItem>
-                  <SelectItem value="design">Design</SelectItem>
-                  <SelectItem value="product">Product</SelectItem>
-                  <SelectItem value="marketing">Marketing</SelectItem>
-                  <SelectItem value="operations">Operations</SelectItem>
+                  {teams.map((team) => (
+                    <SelectItem key={team} value={team}>
+                      {team.charAt(0).toUpperCase() + team.slice(1)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

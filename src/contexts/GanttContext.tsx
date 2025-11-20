@@ -7,8 +7,10 @@ interface GanttContextType {
   project: GanttProject;
   tasks: Task[];
   milestones: Milestone[];
+  teams: string[];
   viewSettings: ViewSettings;
   selectedTaskId: string | null;
+  expandedTeams: Set<string>;
   setProject: (project: GanttProject) => void;
   addTask: (task: Task) => void;
   updateTask: (taskId: string, updates: Partial<Task>) => void;
@@ -16,6 +18,9 @@ interface GanttContextType {
   addMilestone: (milestone: Milestone) => void;
   updateMilestone: (milestoneId: string, updates: Partial<Milestone>) => void;
   deleteMilestone: (milestoneId: string) => void;
+  addTeam: (teamName: string) => void;
+  deleteTeam: (teamName: string) => void;
+  toggleTeamExpanded: (teamName: string) => void;
   setViewSettings: (settings: Partial<ViewSettings>) => void;
   setSelectedTaskId: (taskId: string | null) => void;
   saveProject: () => void;
@@ -39,6 +44,7 @@ interface GanttProviderProps {
 export const GanttProvider: React.FC<GanttProviderProps> = ({ children }) => {
   const [project, setProject] = useState<GanttProject>(createMockProject());
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [expandedTeams, setExpandedTeams] = useState<Set<string>>(new Set());
   
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -49,6 +55,11 @@ export const GanttProvider: React.FC<GanttProviderProps> = ({ children }) => {
     startDate: new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000),
     endDate: addMonths(today, 2)
   });
+
+  // Initialize expanded teams when project changes
+  React.useEffect(() => {
+    setExpandedTeams(new Set(project.teams));
+  }, [project.teams]);
 
   const addTask = useCallback((task: Task) => {
     setProject(prev => ({
@@ -105,6 +116,42 @@ export const GanttProvider: React.FC<GanttProviderProps> = ({ children }) => {
     }));
   }, []);
 
+  const addTeam = useCallback((teamName: string) => {
+    setProject(prev => {
+      // Check if team already exists (case-insensitive)
+      const teamExists = prev.teams.some(t => t.toLowerCase() === teamName.toLowerCase());
+      if (teamExists) {
+        alert('Team already exists!');
+        return prev;
+      }
+      return {
+        ...prev,
+        teams: [...prev.teams, teamName],
+        updatedAt: new Date()
+      };
+    });
+  }, []);
+
+  const deleteTeam = useCallback((teamName: string) => {
+    setProject(prev => ({
+      ...prev,
+      teams: prev.teams.filter(t => t !== teamName),
+      updatedAt: new Date()
+    }));
+  }, []);
+
+  const toggleTeamExpanded = useCallback((teamName: string) => {
+    setExpandedTeams(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(teamName)) {
+        newSet.delete(teamName);
+      } else {
+        newSet.add(teamName);
+      }
+      return newSet;
+    });
+  }, []);
+
   const setViewSettings = useCallback((settings: Partial<ViewSettings>) => {
     setViewSettingsState(prev => ({ ...prev, ...settings }));
   }, []);
@@ -136,6 +183,7 @@ export const GanttProvider: React.FC<GanttProviderProps> = ({ children }) => {
           ...milestone,
           date: new Date(milestone.date)
         })),
+        teams: parsed.teams || ['engineering', 'design', 'product', 'marketing', 'operations'],
         createdAt: new Date(parsed.createdAt),
         updatedAt: new Date(parsed.updatedAt)
       };
@@ -150,8 +198,10 @@ export const GanttProvider: React.FC<GanttProviderProps> = ({ children }) => {
     project,
     tasks: project.tasks,
     milestones: project.milestones,
+    teams: project.teams,
     viewSettings,
     selectedTaskId,
+    expandedTeams,
     setProject,
     addTask,
     updateTask,
@@ -159,6 +209,9 @@ export const GanttProvider: React.FC<GanttProviderProps> = ({ children }) => {
     addMilestone,
     updateMilestone,
     deleteMilestone,
+    addTeam,
+    deleteTeam,
+    toggleTeamExpanded,
     setViewSettings,
     setSelectedTaskId,
     saveProject,

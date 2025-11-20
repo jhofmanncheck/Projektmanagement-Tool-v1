@@ -5,11 +5,13 @@ import { TaskList } from './components/sidebar/TaskList';
 import { GanttChart } from './components/gantt/GanttChart';
 import { TaskForm } from './components/forms/TaskForm';
 import { MilestoneForm } from './components/forms/MilestoneForm';
+import { TeamForm } from './components/forms/TeamForm';
 import { TaskDetails } from './components/TaskDetails';
 
 function App() {
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
   const [isMilestoneFormOpen, setIsMilestoneFormOpen] = useState(false);
+  const [isTeamFormOpen, setIsTeamFormOpen] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
 
   const handleAddTask = () => {
@@ -31,7 +33,11 @@ function App() {
     <GanttProvider>
       <div className="h-screen flex flex-col bg-slate-50">
         {/* Toolbar */}
-        <Toolbar onAddTask={handleAddTask} onAddMilestone={() => setIsMilestoneFormOpen(true)} />
+        <Toolbar 
+          onAddTask={handleAddTask} 
+          onAddMilestone={() => setIsMilestoneFormOpen(true)}
+          onAddTeam={() => setIsTeamFormOpen(true)}
+        />
 
         {/* Main content area */}
         <div className="flex flex-1 overflow-hidden">
@@ -50,6 +56,7 @@ function App() {
         {/* Modals */}
         <TaskForm isOpen={isTaskFormOpen} onClose={handleCloseTaskForm} taskId={editingTaskId} />
         <MilestoneForm isOpen={isMilestoneFormOpen} onClose={() => setIsMilestoneFormOpen(false)} />
+        <TeamForm isOpen={isTeamFormOpen} onClose={() => setIsTeamFormOpen(false)} />
       </div>
     </GanttProvider>
   );

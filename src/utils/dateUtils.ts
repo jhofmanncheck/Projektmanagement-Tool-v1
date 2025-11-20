@@ -31,6 +31,39 @@ export const isSameDay = (date1: Date, date2: Date): boolean => {
   );
 };
 
+// Count weekdays (Mon-Fri) between two dates (inclusive)
+export const countWeekdays = (startDate: Date, endDate: Date): number => {
+  let count = 0;
+  let currentDate = new Date(startDate);
+  
+  while (currentDate <= endDate) {
+    const dayOfWeek = currentDate.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Not Sunday or Saturday
+      count++;
+    }
+    currentDate = addDays(currentDate, 1);
+  }
+  
+  return count;
+};
+
+// Add weekdays to a date (skipping weekends)
+export const addWeekdays = (date: Date, weekdaysToAdd: number): Date => {
+  let result = new Date(date);
+  let remaining = Math.abs(weekdaysToAdd);
+  const direction = weekdaysToAdd >= 0 ? 1 : -1;
+  
+  while (remaining > 0) {
+    result = addDays(result, direction);
+    const dayOfWeek = result.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Not weekend
+      remaining--;
+    }
+  }
+  
+  return result;
+};
+
 export const startOfWeek = (date: Date): Date => {
   const result = new Date(date);
   const day = result.getDay();
@@ -75,7 +108,13 @@ export const generateDateRange = (
   let currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
-    dates.push(new Date(currentDate));
+    const dayOfWeek = currentDate.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // Sunday or Saturday
+    
+    // Skip weekends in day view only
+    if (scale !== 'day' || !isWeekend) {
+      dates.push(new Date(currentDate));
+    }
     
     switch (scale) {
       case 'day':
@@ -108,13 +147,15 @@ export const dateToPosition = (
   scale: ViewScale,
   zoom: number
 ): number => {
-  const days = differenceInDays(date, startDate);
   const columnWidth = getColumnWidth(scale, zoom);
   
   switch (scale) {
     case 'day':
-      return days * columnWidth;
+      // Count only weekdays (Mon-Fri) for positioning
+      const weekdays = countWeekdays(startDate, date) - 1; // -1 to get position before the date
+      return Math.max(0, weekdays) * columnWidth;
     case 'week':
+      const days = differenceInDays(date, startDate);
       return Math.floor(days / 7) * columnWidth;
     case 'month':
       const monthsDiff = (date.getFullYear() - startDate.getFullYear()) * 12 + 
@@ -134,7 +175,8 @@ export const positionToDate = (
   
   switch (scale) {
     case 'day':
-      return addDays(startDate, units);
+      // Add only weekdays (Mon-Fri) for date calculation
+      return addWeekdays(startDate, units);
     case 'week':
       return addWeeks(startDate, units);
     case 'month':

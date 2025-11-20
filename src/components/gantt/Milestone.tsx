@@ -10,12 +10,50 @@ interface MilestoneProps {
 }
 
 export const Milestone: React.FC<MilestoneProps> = ({ milestone }) => {
-  const { viewSettings, tasks } = useGantt();
+  const { viewSettings, tasks, teams, expandedTeams } = useGantt();
   const { startDate: viewStart, scale, zoom } = viewSettings;
 
   const position = dateToPosition(milestone.date, viewStart, scale, zoom);
   const rowHeight = 48; // Height of each task row
-  const totalHeight = tasks.length * rowHeight;
+  const teamHeaderHeight = 32; // Height of each team header
+  
+  // Calculate total height including team headers and considering expanded/collapsed state
+  const totalHeight = React.useMemo(() => {
+    // Group tasks by team
+    const tasksByTeam: Record<string, typeof tasks> = {};
+    tasks.forEach((task) => {
+      if (!tasksByTeam[task.team]) {
+        tasksByTeam[task.team] = [];
+      }
+      tasksByTeam[task.team].push(task);
+    });
+
+    // Sort teams
+    const sortedTeams = Object.keys(tasksByTeam).sort((a, b) => {
+      const aIndex = teams.indexOf(a);
+      const bIndex = teams.indexOf(b);
+      
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      return a.localeCompare(b);
+    });
+
+    let height = 0;
+    sortedTeams.forEach((team) => {
+      // Add team header height
+      height += teamHeaderHeight;
+      
+      // Add task rows height only if team is expanded
+      if (expandedTeams.has(team)) {
+        height += tasksByTeam[team].length * rowHeight;
+      }
+    });
+
+    return height;
+  }, [tasks, teams, expandedTeams]);
 
   return (
     <div
